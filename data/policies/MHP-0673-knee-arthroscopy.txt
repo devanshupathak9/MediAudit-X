@@ -1,0 +1,65 @@
+MERIDIAN HEALTH PLAN
+CLINICAL POLICY BULLETIN MHP-0673
+ARTHROSCOPIC SURGERY OF THE KNEE
+Version 2026.1 | Effective 2026-01-01 | Supersedes 2025.2
+
+NOTE: This is a SYNTHETIC policy document written for the MediAudit-X demo. It is
+modeled on the structure of publicly published payer medical policies but describes
+a fictional payer and is not the coverage policy of any real organization.
+
+SECTION 1. SCOPE
+
+This policy applies to arthroscopic procedures of the knee, including but not
+limited to CPT codes 29870, 29873, 29874, 29877, 29880, and 29881, when performed
+for degenerative joint disease or meniscal pathology. It does not apply to
+arthroscopy performed for acute traumatic injury sustained within the preceding
+fourteen (14) days, which is reviewed under policy MHP-0681.
+
+SECTION 2. MEDICAL NECESSITY CRITERIA
+
+Arthroscopic surgery of the knee is considered medically necessary when ALL of the
+following criteria are met:
+
+2.1 The member has a documented diagnosis of osteoarthritis of the knee (ICD-10
+M17.0 through M17.9) or derangement of meniscus (ICD-10 M23.2 through M23.3)
+established prior to the date of service.
+
+2.2 The member has completed a minimum of six (6) months of supervised conservative
+therapy, evidenced by at least one supervised physical therapy encounter documented
+in each of six (6) or more distinct calendar months within the twenty-four (24)
+months preceding the date of service, with no interruption between consecutive
+documented encounters exceeding forty-five (45) days.
+
+2.3 Diagnostic imaging of the affected knee (CPT 73721, 73722, or 73723) was
+obtained subsequent to the completion of the conservative therapy trial described
+in 2.2, and no earlier than the final documented conservative therapy encounter.
+
+2.4 The member has not undergone arthroscopic surgery of the same knee within the
+one hundred eighty (180) days preceding the date of service.
+
+2.5 A body mass index (BMI) of less than 40.0 kg/m2 is documented within the twelve
+(12) months preceding the date of service.
+
+SECTION 3. DOCUMENTATION STANDARDS
+
+All criteria in Section 2 must be substantiated by documentation present in the
+member's medical record as of the date of service. Documentation entered into the
+record after the date of service may be considered only upon reconsideration and
+must be identified as such. Retrospective entry of conservative therapy encounters
+without contemporaneous supporting documentation does not satisfy criterion 2.2.
+
+SECTION 4. LIMITATIONS AND EXCLUSIONS
+
+Arthroscopic lavage and debridement performed as a sole procedure for osteoarthritis
+of the knee is considered not medically necessary, consistent with published evidence
+demonstrating no benefit over placebo procedure.
+
+SECTION 5. CODING
+
+CPT 29880 Arthroscopy, knee, surgical; with meniscectomy (medial AND lateral)
+CPT 29881 Arthroscopy, knee, surgical; with meniscectomy (medial OR lateral)
+CPT 97110 Therapeutic exercise, each 15 minutes
+CPT 97112 Neuromuscular reeducation
+CPT 97140 Manual therapy techniques
+ICD-10 M17.11 Unilateral primary osteoarthritis, right knee
+ICD-10 M23.221 Derangement of posterior horn of medial meniscus, right knee
