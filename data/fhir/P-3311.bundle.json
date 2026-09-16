@@ -1,0 +1,105 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:P-3311",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "P-3311",
+        "birthDate": "1994-07-21",
+        "gender": "female"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-3311-condition-01",
+      "resource": {
+        "resourceType": "Condition",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "E10.9",
+              "display": "Type 1 diabetes mellitus without complications"
+            }
+          ]
+        },
+        "onsetDateTime": "2019-06-02",
+        "recordedDate": "2019-06-02",
+        "id": "p-3311-condition-01",
+        "meta": {
+          "lastUpdated": "2019-06-02T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-3311"
+        },
+        "note": [
+          {
+            "text": "Type 1 diabetes mellitus, on multiple daily injections."
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-3311-observation-01",
+      "resource": {
+        "resourceType": "Observation",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "4548-4",
+              "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-05-18",
+        "issued": "2026-05-18T09:00:00Z",
+        "valueQuantity": {
+          "value": 7.4,
+          "unit": "%"
+        },
+        "id": "p-3311-observation-01",
+        "meta": {
+          "lastUpdated": "2026-05-18T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-3311"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-3311-medicationrequest-01",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "274783",
+              "display": "Insulin Glargine 100 UNT/ML Injection"
+            }
+          ]
+        },
+        "authoredOn": "2019-06-05",
+        "id": "p-3311-medicationrequest-01",
+        "meta": {
+          "lastUpdated": "2019-06-05T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-3311"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{"question": "patient weight too high", "cpt": "29881", "expected_section": "2.5"}
+{"question": "BMI limit for surgery", "cpt": "29881", "expected_section": "2.5"}
+{"question": "how obese can the patient be", "cpt": "29881", "expected_section": "2.5"}
+{"question": "how long must physical therapy last before surgery", "cpt": "29881", "expected_section": "2.2"}
+{"question": "minimum months of conservative treatment", "cpt": "29881", "expected_section": "2.2"}
+{"question": "maximum gap between therapy visits", "cpt": "29881", "expected_section": "2.2"}
+{"question": "was the MRI done at the right time", "cpt": "29881", "expected_section": "2.3"}
+{"question": "imaging must come after therapy", "cpt": "29881", "expected_section": "2.3"}
+{"question": "which diagnosis is required", "cpt": "29881", "expected_section": "2.1"}
+{"question": "does the patient need arthritis or a meniscus tear", "cpt": "29881", "expected_section": "2.1"}
+{"question": "repeat knee surgery too soon", "cpt": "29881", "expected_section": "2.4"}
+{"question": "previous arthroscopy on the same knee", "cpt": "29881", "expected_section": "2.4"}
+{"question": "notes added to the chart after the surgery", "cpt": "29881", "expected_section": "3"}
+{"question": "late documentation entries", "cpt": "29881", "expected_section": "3"}
+{"question": "is washing out the knee covered for arthritis", "cpt": "29881", "expected_section": "4"}
+{"question": "which injuries are excluded from this policy", "cpt": "29881", "expected_section": "1"}

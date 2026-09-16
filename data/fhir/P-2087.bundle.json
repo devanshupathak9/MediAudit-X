@@ -1,0 +1,105 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:P-2087",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "P-2087",
+        "birthDate": "1961-02-02",
+        "gender": "male"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-2087-condition-01",
+      "resource": {
+        "resourceType": "Condition",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "E11.9",
+              "display": "Type 2 diabetes mellitus without complications"
+            }
+          ]
+        },
+        "onsetDateTime": "2025-03-14",
+        "recordedDate": "2025-03-14",
+        "id": "p-2087-condition-01",
+        "meta": {
+          "lastUpdated": "2025-03-14T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-2087"
+        },
+        "note": [
+          {
+            "text": "Type 2 diabetes mellitus, poorly controlled. Metformin and basal insulin."
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-2087-observation-01",
+      "resource": {
+        "resourceType": "Observation",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "4548-4",
+              "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-05-20",
+        "issued": "2026-05-20T09:00:00Z",
+        "valueQuantity": {
+          "value": 9.2,
+          "unit": "%"
+        },
+        "id": "p-2087-observation-01",
+        "meta": {
+          "lastUpdated": "2026-05-20T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-2087"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-2087-medicationrequest-01",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "274783",
+              "display": "Insulin Glargine 100 UNT/ML Injection"
+            }
+          ]
+        },
+        "authoredOn": "2025-09-01",
+        "id": "p-2087-medicationrequest-01",
+        "meta": {
+          "lastUpdated": "2025-09-01T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-2087"
+        }
+      }
+    }
+  ]
+}

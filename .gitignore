@@ -221,3 +221,6 @@ __marimo__/
 # elasticsearch/.env is pure local config (version, ports, heap) with no secrets.
 # It must be committed or `docker compose up` fails for anyone cloning the repo.
 !elasticsearch/.env
+
+# raw uploads, stored policies, job reports
+storage/

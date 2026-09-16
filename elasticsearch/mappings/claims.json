@@ -1,0 +1,41 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "claim_id": {
+        "type": "keyword"
+      },
+      "job_id": {
+        "type": "keyword"
+      },
+      "patient_id": {
+        "type": "keyword"
+      },
+      "payer": {
+        "type": "keyword"
+      },
+      "cpt": {
+        "type": "keyword"
+      },
+      "icd": {
+        "type": "keyword"
+      },
+      "date_of_service": {
+        "type": "date"
+      },
+      "billed_amount": {
+        "type": "double"
+      },
+      "received_at": {
+        "type": "date"
+      },
+      "status": {
+        "type": "keyword"
+      }
+    }
+  }
+}

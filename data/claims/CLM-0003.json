@@ -1,0 +1,9 @@
+{
+  "claim_id": "CLM-0003",
+  "patient_id": "P-4455",
+  "payer": "MERIDIAN HEALTH PLAN",
+  "cpt": "29881",
+  "icd": ["M23.221"],
+  "date_of_service": "2026-05-11",
+  "billed_amount": 11850.00
+}

@@ -10,7 +10,7 @@ import os
 
 from langchain_core.embeddings import Embeddings
 
-import es_client  # noqa: F401  (loads .env)
+import shared.config  # noqa: F401  (loads .env)
 
 PROVIDER = os.getenv("EMBEDDING_PROVIDER", "openai").lower()
 

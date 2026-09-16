@@ -1,20 +1,22 @@
-"""Step 1: create the empty indexes (like creating empty tables in a database).
-
-Each file in mappings/ becomes one index with the same name.
-Running it again deletes the old index and creates a fresh one.
+"""Create the empty indexes from mappings/ (deletes existing ones first).
 
 For payer-policies, the vector size comes from the embedding model in .env,
-and the model name is saved on the index so search can check it later.
+and the model name is saved on the index so indexing and search can check it.
 
-    python create_indices.py
+    python elasticsearch/create_indices.py
 """
 import json
+import sys
+from pathlib import Path
 
-from embedder import DIMS, MODEL_NAME
-from es_client import MAPPINGS_DIR, es
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # repo root, for `shared`
+
+from shared.config import MAPPINGS_DIR  # noqa: E402
+from shared.embeddings import DIMS, MODEL_NAME  # noqa: E402
+from shared.es import es  # noqa: E402
 
 for mapping_file in sorted(MAPPINGS_DIR.glob("*.json")):
-    index_name = mapping_file.stem  # "patient-events.json" -> "patient-events"
+    index_name = mapping_file.stem
     body = json.loads(mapping_file.read_text())
     mappings = body["mappings"]
 

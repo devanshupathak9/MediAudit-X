@@ -1,0 +1,325 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:P-4455",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "P-4455",
+        "birthDate": "1979-09-30",
+        "gender": "male"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-condition-01",
+      "resource": {
+        "resourceType": "Condition",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M23.221",
+              "display": "Derangement of posterior horn of medial meniscus, right knee"
+            }
+          ]
+        },
+        "onsetDateTime": "2025-08-19",
+        "recordedDate": "2025-08-19",
+        "id": "p-4455-condition-01",
+        "meta": {
+          "lastUpdated": "2025-08-19T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        },
+        "note": [
+          {
+            "text": "Medial joint line tenderness, positive McMurray. Suspect medial meniscal tear."
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-01",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "97110",
+              "display": "Therapeutic exercise, each 15 minutes"
+            }
+          ]
+        },
+        "performedDateTime": "2025-09-08",
+        "id": "p-4455-procedure-01",
+        "meta": {
+          "lastUpdated": "2025-09-08T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-02",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "97110",
+              "display": "Therapeutic exercise, each 15 minutes"
+            }
+          ]
+        },
+        "performedDateTime": "2025-09-29",
+        "id": "p-4455-procedure-02",
+        "meta": {
+          "lastUpdated": "2025-09-29T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-03",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "97110",
+              "display": "Therapeutic exercise, each 15 minutes"
+            }
+          ]
+        },
+        "performedDateTime": "2025-10-20",
+        "id": "p-4455-procedure-03",
+        "meta": {
+          "lastUpdated": "2025-10-20T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-04",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "97110",
+              "display": "Therapeutic exercise, each 15 minutes"
+            }
+          ]
+        },
+        "performedDateTime": "2025-11-10",
+        "id": "p-4455-procedure-04",
+        "meta": {
+          "lastUpdated": "2025-11-10T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-05",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "97110",
+              "display": "Therapeutic exercise, each 15 minutes"
+            }
+          ]
+        },
+        "performedDateTime": "2025-12-15",
+        "id": "p-4455-procedure-05",
+        "meta": {
+          "lastUpdated": "2025-12-15T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-06",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "97110",
+              "display": "Therapeutic exercise, each 15 minutes"
+            }
+          ]
+        },
+        "performedDateTime": "2026-01-19",
+        "id": "p-4455-procedure-06",
+        "meta": {
+          "lastUpdated": "2026-01-19T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-07",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "97110",
+              "display": "Therapeutic exercise, each 15 minutes"
+            }
+          ]
+        },
+        "performedDateTime": "2026-02-16",
+        "id": "p-4455-procedure-07",
+        "meta": {
+          "lastUpdated": "2026-02-16T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-08",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "97110",
+              "display": "Therapeutic exercise, each 15 minutes"
+            }
+          ]
+        },
+        "performedDateTime": "2026-03-16",
+        "id": "p-4455-procedure-08",
+        "meta": {
+          "lastUpdated": "2026-03-16T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-observation-01",
+      "resource": {
+        "resourceType": "Observation",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "39156-5",
+              "display": "Body mass index (BMI) [Ratio]"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-02-16",
+        "issued": "2026-02-16T09:00:00Z",
+        "valueQuantity": {
+          "value": 28.7,
+          "unit": "kg/m2"
+        },
+        "id": "p-4455-observation-01",
+        "meta": {
+          "lastUpdated": "2026-02-16T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-09",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "73721",
+              "display": "MRI, lower extremity joint, without contrast"
+            }
+          ]
+        },
+        "performedDateTime": "2026-04-02",
+        "id": "p-4455-procedure-09",
+        "meta": {
+          "lastUpdated": "2026-04-02T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        },
+        "note": [
+          {
+            "text": "MRI right knee: displaced bucket-handle tear of the medial meniscus."
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p-4455-procedure-10",
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "29881",
+              "display": "Arthroscopy, knee, surgical; with meniscectomy (medial OR lateral)"
+            }
+          ]
+        },
+        "performedDateTime": "2026-05-11",
+        "id": "p-4455-procedure-10",
+        "meta": {
+          "lastUpdated": "2026-05-11T09:00:00Z"
+        },
+        "subject": {
+          "reference": "Patient/P-4455"
+        }
+      }
+    }
+  ]
+}

@@ -1,81 +1,35 @@
-"""Search policy sections three ways and compare (via LangChain ElasticsearchStore).
+"""Playground: search policy sections three ways and compare.
 
   keyword : matches words (English analyzer: "months" == "month")
   vector  : matches meaning ("weight" finds "body mass index")
-  hybrid  : both, merged with RRF (Reciprocal Rank Fusion)
+  hybrid  : both, merged with RRF
 
-Filters (exact, applied BEFORE ranking): --cpt, --date, --type
-
-    python search_policies.py "patient weight too high"
-    python search_policies.py "patient weight too high" --mode all
-    python search_policies.py "how long must therapy last" --cpt 29881 --date 2026-06-01 --type criterion
+    python elasticsearch/search_policies.py "patient weight too high" --mode all
+    python elasticsearch/search_policies.py "was the MRI done at the right time" --cpt 29881 --date 2026-06-01 --type criterion
 """
 import argparse
+import sys
+from pathlib import Path
 
-from langchain_elasticsearch import BM25Strategy, DenseVectorStrategy, ElasticsearchStore
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # repo root, for `shared`
 
-from embedder import MODEL_NAME, get_embeddings
-from es_client import es
-
-INDEX = "payer-policies"
+from shared.embeddings import MODEL_NAME  # noqa: E402
+from shared.policy_search import MODES, search  # noqa: E402
 
 parser = argparse.ArgumentParser()
 parser.add_argument("question")
-parser.add_argument("--mode", choices=["keyword", "vector", "hybrid", "all"], default="hybrid")
-parser.add_argument("--cpt", help="only policies that cover this procedure code, e.g. 29881")
+parser.add_argument("--mode", choices=[*MODES, "all"], default="hybrid")
+parser.add_argument("--cpt", help="only policies covering this procedure code, e.g. 29881")
 parser.add_argument("--date", help="only policies in effect on this date, e.g. 2026-06-01")
 parser.add_argument("--type", help="only this chunk type, e.g. criterion")
 parser.add_argument("--top", type=int, default=3)
 args = parser.parse_args()
 
-# The query must be embedded with the same model the index was built with.
-saved_model = es.indices.get_mapping(index=INDEX)[INDEX]["mappings"].get("_meta", {}).get("embedding_model")
-if saved_model != MODEL_NAME:
-    raise SystemExit(f"Index was built with {saved_model!r} but .env selects {MODEL_NAME!r}. "
-                     f"Re-index, or change EMBEDDING_PROVIDER back.")
-
-# ---- exact filters (metadata lives under "metadata.") ----
-filters = []
-if args.cpt:
-    filters.append({"term": {"metadata.applies_to_cpt": args.cpt}})
-if args.type:
-    filters.append({"term": {"metadata.chunk_type": args.type}})
-if args.date:
-    filters.append({"range": {"metadata.effective_from": {"lte": args.date}}})
-    filters.append({"bool": {"should": [
-        {"range": {"metadata.effective_to": {"gte": args.date}}},
-        {"bool": {"must_not": {"exists": {"field": "metadata.effective_to"}}}},
-    ]}})
-
-STRATEGIES = {
-    "keyword": BM25Strategy(),
-    "vector": DenseVectorStrategy(),
-    "hybrid": DenseVectorStrategy(hybrid=True, rrf={"rank_constant": 20, "rank_window_size": 50}),
-}
-
-embeddings = get_embeddings()
-
-
-def run(mode):
-    store = ElasticsearchStore(index_name=INDEX, client=es, embedding=embeddings,
-                               query_field="chunk_text", vector_query_field="chunk_vector",
-                               strategy=STRATEGIES[mode])
-    if mode == "hybrid":
-        # LangChain returns no scores for RRF hybrid, so show the rank instead
-        docs = store.similarity_search(args.question, k=args.top, filter=filters)
-        results = [(doc, f"rank {i}") for i, doc in enumerate(docs, 1)]
-    else:
-        results = [(doc, f"score {score:.3f}")
-                   for doc, score in store.similarity_search_with_score(args.question, k=args.top, filter=filters)]
-
-    print(f"\n[{mode.upper()}]  {len(results)} result(s)")
-    for doc, label in results:
-        m = doc.metadata
-        preview = " ".join(doc.page_content.split())[:90]
-        print(f"  {label:<11}  §{m['section_no']:<4} {m['chunk_type']:<14} {preview}...")
-
-
-print(f'Question: "{args.question}"   model: {MODEL_NAME}   '
-      f'filters: cpt={args.cpt} date={args.date} type={args.type}')
-for mode in (["keyword", "vector", "hybrid"] if args.mode == "all" else [args.mode]):
-    run(mode)
+print(f'Question: "{args.question}"   model: {MODEL_NAME}   filters: cpt={args.cpt} date={args.date} type={args.type}')
+for mode in (MODES if args.mode == "all" else [args.mode]):
+    hits = search(args.question, mode=mode, k=args.top, cpt=args.cpt, date=args.date, chunk_type=args.type)
+    print(f"\n[{mode.upper()}]  {len(hits)} result(s)")
+    for h in hits:
+        label = f"rank {h['rank']}" if h["score"] is None else f"score {h['score']:.3f}"
+        m = h["metadata"]
+        print(f"  {label:<11}  §{m['section_no']:<4} {m['chunk_type']:<14} {' '.join(h['text'].split())[:90]}...")

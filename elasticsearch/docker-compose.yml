@@ -1,6 +1,6 @@
 # MediAudit-X local Elasticsearch
 #
-#   docker compose up -d           # Elasticsearch only  (~1.5 GB RAM)
+#   docker compose up -d           # Elasticsearch + Redis (~1.6 GB RAM)
 #   docker compose --profile ui up -d   # + Kibana        (~2.5 GB RAM)
 #   docker compose down            # stop, keep data
 #   docker compose down -v         # stop, WIPE data
@@ -37,6 +37,18 @@ services:
       timeout: 10s
       retries: 30
       start_period: 40s
+
+  redis:
+    # Job queue for the workers (ingestion -> agent -> evaluator)
+    image: redis:7.4-alpine
+    container_name: mediaudit-redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   kibana:
     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
