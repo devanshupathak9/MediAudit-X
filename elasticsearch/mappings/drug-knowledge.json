@@ -1,0 +1,21 @@
+{
+  "settings": { "number_of_shards": 1, "number_of_replicas": 0 },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "rxcui":        { "type": "keyword" },
+      "ingredient":   { "type": "keyword" },
+      "brand_names":  { "type": "keyword" },
+      "drug_class":   { "type": "keyword" },
+      "label_text":   { "type": "text" },
+      "boxed_warning":{ "type": "text" },
+      "interacts_with_rxcui": { "type": "keyword" },
+      "interacts_with_class": { "type": "keyword" },
+      "severity":     { "type": "keyword" },
+      "contraindicated_icd": { "type": "keyword" },
+      "source_doc_id":{ "type": "keyword" },
+      "byte_start":   { "type": "integer" },
+      "byte_end":     { "type": "integer" }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "settings": { "number_of_shards": 1, "number_of_replicas": 0 },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "audit_id":     { "type": "keyword" },
+      "claim_id":     { "type": "keyword" },
+      "patient_id":   { "type": "keyword" },
+      "policy_id":    { "type": "keyword" },
+      "policy_version": { "type": "keyword" },
+      "verdict":      { "type": "keyword" },
+      "decided_at":   { "type": "date" },
+      "as_of":        { "type": "date" },
+      "criteria_results": { "type": "object", "enabled": false },
+      "esql_executed":    { "type": "object", "enabled": false },
+      "evidence":         { "type": "object", "enabled": false },
+      "narrative":    { "type": "text" },
+      "prev_hash":    { "type": "keyword" },
+      "hash":         { "type": "keyword" }
+    }
+  }
+}

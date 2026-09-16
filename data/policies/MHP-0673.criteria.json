@@ -1,0 +1,184 @@
+{
+  "policy_id": "MHP-0673",
+  "payer": "MERIDIAN",
+  "version": "2026.1",
+  "title": "Arthroscopic Surgery of the Knee",
+  "effective_from": "2026-01-01",
+  "effective_to": null,
+  "source_doc_id": "MHP-0673-knee-arthroscopy.txt",
+  "applies_to_cpt": [
+    "29870",
+    "29873",
+    "29874",
+    "29877",
+    "29880",
+    "29881"
+  ],
+  "combine": "ALL",
+  "as_of_rule": "date_of_service",
+  "criteria": [
+    {
+      "criterion_id": "MHP-0673-C1",
+      "label": "Documented knee OA or meniscal derangement prior to DOS",
+      "type": "existence",
+      "match": {
+        "event_type": "diagnosis",
+        "code_system": "ICD10",
+        "code_prefix_in": [
+          "M17.",
+          "M23.2",
+          "M23.3"
+        ]
+      },
+      "window": {
+        "anchor": "date_of_service",
+        "lookback_days": 3650,
+        "must_precede_anchor": true
+      },
+      "assert": {
+        "min_count": 1
+      },
+      "source": {
+        "section": "2.1",
+        "quote": "The member has a documented diagnosis of osteoarthritis of the knee",
+        "byte_start": 939,
+        "byte_end": 1006,
+        "line": 23
+      }
+    },
+    {
+      "criterion_id": "MHP-0673-C2",
+      "label": "\u2265 6 distinct months of supervised conservative therapy, no gap > 45 days",
+      "type": "temporal_duration",
+      "match": {
+        "event_type": "procedure",
+        "code_system": "CPT",
+        "code_in": [
+          "97110",
+          "97112",
+          "97116",
+          "97140",
+          "97530"
+        ]
+      },
+      "window": {
+        "anchor": "date_of_service",
+        "lookback_days": 730
+      },
+      "assert": {
+        "distinct_months_gte": 6,
+        "max_gap_days": 45
+      },
+      "source": {
+        "section": "2.2",
+        "quote": "a minimum of six (6) months of supervised conservative",
+        "byte_start": 1164,
+        "byte_end": 1218,
+        "line": 27
+      }
+    },
+    {
+      "criterion_id": "MHP-0673-C3",
+      "label": "Imaging obtained after the final conservative therapy encounter",
+      "type": "temporal_order",
+      "match": {
+        "before": {
+          "event_type": "procedure",
+          "code_system": "CPT",
+          "code_in": [
+            "97110",
+            "97112",
+            "97116",
+            "97140",
+            "97530"
+          ],
+          "pick": "last"
+        },
+        "after": {
+          "event_type": "procedure",
+          "code_system": "CPT",
+          "code_in": [
+            "73721",
+            "73722",
+            "73723"
+          ],
+          "pick": "last"
+        }
+      },
+      "window": {
+        "anchor": "date_of_service",
+        "lookback_days": 730
+      },
+      "assert": {
+        "min_days_between": 0
+      },
+      "source": {
+        "section": "2.3",
+        "quote": "was\nobtained subsequent to the completion of the conservative therapy trial",
+        "byte_start": 1590,
+        "byte_end": 1665,
+        "line": 33
+      }
+    },
+    {
+      "criterion_id": "MHP-0673-C4",
+      "label": "No arthroscopy of the same knee within 180 days",
+      "type": "absence",
+      "match": {
+        "event_type": "procedure",
+        "code_system": "CPT",
+        "code_in": [
+          "29870",
+          "29873",
+          "29874",
+          "29877",
+          "29880",
+          "29881"
+        ]
+      },
+      "window": {
+        "anchor": "date_of_service",
+        "lookback_days": 180,
+        "exclude_anchor_day": true
+      },
+      "assert": {
+        "max_count": 0
+      },
+      "source": {
+        "section": "2.4",
+        "quote": "has not undergone arthroscopic surgery of the same knee",
+        "byte_start": 1773,
+        "byte_end": 1828,
+        "line": 37
+      }
+    },
+    {
+      "criterion_id": "MHP-0673-C5",
+      "label": "BMI < 40.0 documented within 12 months",
+      "type": "lab_threshold",
+      "match": {
+        "event_type": "observation",
+        "code_system": "LOINC",
+        "code_in": [
+          "39156-5"
+        ]
+      },
+      "window": {
+        "anchor": "date_of_service",
+        "lookback_days": 365,
+        "pick": "last"
+      },
+      "assert": {
+        "op": "lt",
+        "value": 40.0
+      },
+      "source": {
+        "section": "2.5",
+        "quote": "A body mass index (BMI) of less than 40.0 kg/m2 is documented",
+        "byte_start": 1906,
+        "byte_end": 1967,
+        "line": 40
+      }
+    }
+  ]
+}

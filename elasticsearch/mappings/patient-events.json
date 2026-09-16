@@ -1,0 +1,49 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "analyzer": {
+        "clinical_text": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "event_id":     { "type": "keyword" },
+      "patient_id":   { "type": "keyword" },
+      "encounter_id": { "type": "keyword" },
+
+      "event_type":   { "type": "keyword" },
+      "code_system":  { "type": "keyword" },
+
+      "code":         { "type": "keyword" },
+
+      "code_text": {
+        "type": "text",
+        "analyzer": "clinical_text",
+        "fields": { "kw": { "type": "keyword", "ignore_above": 256 } }
+      },
+
+      "note_text":    { "type": "text", "analyzer": "clinical_text" },
+
+      "value_num":    { "type": "double" },
+      "value_unit":   { "type": "keyword" },
+      "status":       { "type": "keyword" },
+
+      "event_time":   { "type": "date" },
+      "event_end":    { "type": "date" },
+      "recorded_at":  { "type": "date" },
+
+      "source_doc_id": { "type": "keyword" },
+      "source_page":   { "type": "integer" },
+      "byte_start":    { "type": "integer" },
+      "byte_end":      { "type": "integer" }
+    }
+  }
+}
