@@ -1,36 +1,20 @@
-# MediAudit-X
-.PHONY: help up down reset data indices load smoke demo logs kibana
+# Shortcuts. `make setup` = type one word instead of five commands.
+PY = .venv/bin/python
 
-ES ?= http://localhost:9200
-
-help:
-	@grep -E '^[a-z-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "};{printf "  \033[36m%-10s\033[0m %s\n",$$1,$$2}'
-
-up:      ## start Elasticsearch and wait for green
+up:        # start Elasticsearch in Docker
 	cd elasticsearch && docker compose up -d
-	./elasticsearch/scripts/wait_for_es.sh
 
-kibana:  ## start Kibana too (http://localhost:5601)
-	cd elasticsearch && docker compose --profile ui up -d
-
-down:    ## stop containers, keep data
+down:      # stop Elasticsearch (data is kept)
 	cd elasticsearch && docker compose down
 
-reset:   ## stop containers and WIPE all indexed data
-	cd elasticsearch && docker compose down -v
+install:   # create the Python environment
+	python3 -m venv .venv && $(PY) -m pip install -q -r elasticsearch/requirements.txt
 
-data:    ## regenerate demo patients, policy chunks and citation offsets
-	python3 data/patients/build_demo_patients.py
-	python3 data/policies/anchor_citations.py
-	python3 data/policies/chunk_policy.py
+setup:     # create indexes, load patients, index policies with vectors
+	cd elasticsearch && ../$(PY) create_indices.py && ../$(PY) index_data.py && ../$(PY) index_policies.py
 
-indices: ## (re)create indices from mappings/
-	./elasticsearch/scripts/create_indices.sh --force
+search:    # example: make search Q="patient weight too high"
+	cd elasticsearch && ../$(PY) search_policies.py "$(Q)" --mode all
 
-load:    ## bulk-load the demo dataset
-	./elasticsearch/scripts/load_data.sh
-
-smoke:   ## run the nine proof queries
-	./elasticsearch/scripts/smoke_test.sh
-
-demo: up data indices load smoke  ## everything, from nothing, in one command
+smoke:     # run the 9 demo queries
+	./elasticsearch/smoke_test.sh

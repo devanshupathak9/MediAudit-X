@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-# Nine queries that each prove one claim in the MediAudit-X pitch.
-# Read this file top to bottom -- it is the fastest way to understand the system.
-source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
-require_es
-
+# The 9 demo queries. Needs ES running and data indexed. Run: ./smoke_test.sh
+set -euo pipefail
+ES="${ES_URL:-http://localhost:9200}"
+say() { printf '\n\033[1;36m%s\033[0m\n' "$*"; }
 esql () { # run an ES|QL query, print the rows as a table
   curl -fsS -XPOST "$ES/_query?format=txt" -H 'Content-Type: application/json' \
     -d "$(jq -n --arg q "$1" '{query:$q}')"
@@ -108,12 +107,12 @@ curl -fsS "$ES/payer-policies/_search" -H 'Content-Type: application/json' -d '{
   "query": {
     "bool": {
       "filter": [ { "term": { "applies_to_cpt": "29881" } },
-                  { "term": { "payer": "MERIDIAN" } } ],
+                  { "term": { "payer": "MERIDIAN HEALTH PLAN" } } ],
       "should": [ { "match": { "chunk_text": "conservative therapy months prior to surgery" } } ]
     }
   },
-  "_source": ["chunk_id","section","byte_start","byte_end"]
-}' | jq -r '.hits.hits[] | "   score \(._score|.*100|round/100)  \(._source.chunk_id)  bytes \(._source.byte_start)-\(._source.byte_end)  \(._source.section)"'
+  "_source": ["chunk_id","section_no","byte_start","byte_end"]
+}' | jq -r '.hits.hits[] | "   score \(._score|.*100|round/100)  \(._source.chunk_id)  bytes \(._source.byte_start)-\(._source.byte_end)  §\(._source.section_no)"'
 
 say "Smoke test complete."
 echo "The pitch in one sentence: queries 4 and 5 differ by a single line and by \$12,400."

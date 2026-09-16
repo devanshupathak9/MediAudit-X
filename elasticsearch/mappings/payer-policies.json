@@ -3,25 +3,39 @@
   "mappings": {
     "dynamic": "strict",
     "properties": {
-      "chunk_id":   { "type": "keyword" },
-      "policy_id":  { "type": "keyword" },
-      "payer":      { "type": "keyword" },
-      "version":    { "type": "keyword" },
-      "title":      { "type": "text", "fields": { "kw": { "type": "keyword" } } },
+      "chunk_id":       { "type": "keyword" },
 
+      "policy_id":      { "type": "keyword" },
+      "payer":          { "type": "keyword" },
+      "title":          { "type": "text", "fields": { "kw": { "type": "keyword" } } },
+      "version":        { "type": "keyword" },
+      "supersedes":     { "type": "keyword" },
       "effective_from": { "type": "date" },
       "effective_to":   { "type": "date" },
-
       "applies_to_cpt": { "type": "keyword" },
-      "applies_to_icd": { "type": "keyword" },
 
-      "section":    { "type": "keyword" },
-      "chunk_text": { "type": "text" },
+      "section_no":     { "type": "keyword" },
+      "section_title":  { "type": "keyword" },
+      "chunk_type":     { "type": "keyword" },
+      "cpt_codes_mentioned": { "type": "keyword" },
+      "icd_codes_mentioned": { "type": "keyword" },
+      "duration_months":{ "type": "integer" },
+      "duration_days":  { "type": "integer" },
+      "threshold_op":   { "type": "keyword" },
+      "threshold_value":{ "type": "float" },
+      "threshold_unit": { "type": "keyword" },
 
-      "source_doc_id": { "type": "keyword" },
-      "source_page":   { "type": "integer" },
-      "byte_start":    { "type": "integer" },
-      "byte_end":      { "type": "integer" }
+      "chunk_text":     { "type": "text", "analyzer": "english" },
+      "chunk_vector": {
+        "type": "dense_vector",
+        "dims": 384,
+        "similarity": "cosine",
+        "index_options": { "type": "bbq_disk" }
+      },
+
+      "source_file":    { "type": "keyword" },
+      "byte_start":     { "type": "integer" },
+      "byte_end":       { "type": "integer" }
     }
   }
 }
