@@ -106,13 +106,13 @@ curl -fsS "$ES/payer-policies/_search" -H 'Content-Type: application/json' -d '{
   "size": 3,
   "query": {
     "bool": {
-      "filter": [ { "term": { "applies_to_cpt": "29881" } },
-                  { "term": { "payer": "MERIDIAN HEALTH PLAN" } } ],
+      "filter": [ { "term": { "metadata.applies_to_cpt": "29881" } },
+                  { "term": { "metadata.payer": "MERIDIAN HEALTH PLAN" } } ],
       "should": [ { "match": { "chunk_text": "conservative therapy months prior to surgery" } } ]
     }
   },
-  "_source": ["chunk_id","section_no","byte_start","byte_end"]
-}' | jq -r '.hits.hits[] | "   score \(._score|.*100|round/100)  \(._source.chunk_id)  bytes \(._source.byte_start)-\(._source.byte_end)  §\(._source.section_no)"'
+  "_source": ["metadata.chunk_id","metadata.section_no","metadata.byte_start","metadata.byte_end"]
+}' | jq -r '.hits.hits[] | "   score \(._score|.*100|round/100)  \(._source.metadata.chunk_id)  bytes \(._source.metadata.byte_start)-\(._source.metadata.byte_end)  §\(._source.metadata.section_no)"'
 
 say "Smoke test complete."
 echo "The pitch in one sentence: queries 4 and 5 differ by a single line and by \$12,400."

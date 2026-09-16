@@ -1,4 +1,4 @@
-"""Search policy sections three ways and compare.
+"""Search policy sections three ways and compare (via LangChain ElasticsearchStore).
 
   keyword : matches words (English analyzer: "months" == "month")
   vector  : matches meaning ("weight" finds "body mass index")
@@ -12,7 +12,9 @@ Filters (exact, applied BEFORE ranking): --cpt, --date, --type
 """
 import argparse
 
-from embedder import embed
+from langchain_elasticsearch import BM25Strategy, DenseVectorStrategy, ElasticsearchStore
+
+from embedder import MODEL_NAME, get_embeddings
 from es_client import es
 
 INDEX = "payer-policies"
@@ -26,49 +28,54 @@ parser.add_argument("--type", help="only this chunk type, e.g. criterion")
 parser.add_argument("--top", type=int, default=3)
 args = parser.parse_args()
 
-# ---- exact filters ----
+# The query must be embedded with the same model the index was built with.
+saved_model = es.indices.get_mapping(index=INDEX)[INDEX]["mappings"].get("_meta", {}).get("embedding_model")
+if saved_model != MODEL_NAME:
+    raise SystemExit(f"Index was built with {saved_model!r} but .env selects {MODEL_NAME!r}. "
+                     f"Re-index, or change EMBEDDING_PROVIDER back.")
+
+# ---- exact filters (metadata lives under "metadata.") ----
 filters = []
 if args.cpt:
-    filters.append({"term": {"applies_to_cpt": args.cpt}})
+    filters.append({"term": {"metadata.applies_to_cpt": args.cpt}})
 if args.type:
-    filters.append({"term": {"chunk_type": args.type}})
+    filters.append({"term": {"metadata.chunk_type": args.type}})
 if args.date:
-    filters.append({"range": {"effective_from": {"lte": args.date}}})
+    filters.append({"range": {"metadata.effective_from": {"lte": args.date}}})
     filters.append({"bool": {"should": [
-        {"range": {"effective_to": {"gte": args.date}}},
-        {"bool": {"must_not": {"exists": {"field": "effective_to"}}}},
+        {"range": {"metadata.effective_to": {"gte": args.date}}},
+        {"bool": {"must_not": {"exists": {"field": "metadata.effective_to"}}}},
     ]}})
 
-# ---- the two ways of ranking ----
-keyword = {"standard": {"query": {"bool": {
-    "filter": filters,
-    "must": [{"match": {"chunk_text": args.question}}],
-}}}}
+STRATEGIES = {
+    "keyword": BM25Strategy(),
+    "vector": DenseVectorStrategy(),
+    "hybrid": DenseVectorStrategy(hybrid=True, rrf={"rank_constant": 20, "rank_window_size": 50}),
+}
 
-vector = {"knn": {
-    "field": "chunk_vector",
-    "query_vector": embed([args.question])[0],
-    "k": 10,
-    "num_candidates": 50,
-    "filter": filters,  # inside kNN, so filtering happens before picking the top k
-}}
-
-hybrid = {"rrf": {"retrievers": [keyword, vector], "rank_window_size": 50, "rank_constant": 20}}
-
-RETRIEVERS = {"keyword": keyword, "vector": vector, "hybrid": hybrid}
+embeddings = get_embeddings()
 
 
 def run(mode):
-    response = es.search(index=INDEX, retriever=RETRIEVERS[mode], size=args.top,
-                         source_excludes=["chunk_vector"])
-    hits = response["hits"]["hits"]
-    print(f"\n[{mode.upper()}]  {len(hits)} result(s)")
-    for hit in hits:
-        c = hit["_source"]
-        preview = " ".join(c["chunk_text"].split())[:90]
-        print(f"  score {hit['_score']:.3f}  §{c['section_no']:<4} {c['chunk_type']:<14} {preview}...")
+    store = ElasticsearchStore(index_name=INDEX, client=es, embedding=embeddings,
+                               query_field="chunk_text", vector_query_field="chunk_vector",
+                               strategy=STRATEGIES[mode])
+    if mode == "hybrid":
+        # LangChain returns no scores for RRF hybrid, so show the rank instead
+        docs = store.similarity_search(args.question, k=args.top, filter=filters)
+        results = [(doc, f"rank {i}") for i, doc in enumerate(docs, 1)]
+    else:
+        results = [(doc, f"score {score:.3f}")
+                   for doc, score in store.similarity_search_with_score(args.question, k=args.top, filter=filters)]
+
+    print(f"\n[{mode.upper()}]  {len(results)} result(s)")
+    for doc, label in results:
+        m = doc.metadata
+        preview = " ".join(doc.page_content.split())[:90]
+        print(f"  {label:<11}  §{m['section_no']:<4} {m['chunk_type']:<14} {preview}...")
 
 
-print(f'Question: "{args.question}"   filters: cpt={args.cpt} date={args.date} type={args.type}')
+print(f'Question: "{args.question}"   model: {MODEL_NAME}   '
+      f'filters: cpt={args.cpt} date={args.date} type={args.type}')
 for mode in (["keyword", "vector", "hybrid"] if args.mode == "all" else [args.mode]):
     run(mode)

@@ -2,14 +2,15 @@
 
 Everything comes from the policy text itself (no criteria JSON).
 Metadata is extracted with regex, so codes and numbers are never guessed.
+Embedding and storage go through LangChain (ElasticsearchStore).
 
     python index_policies.py
 """
 import re
 
-from elasticsearch import helpers
+from langchain_elasticsearch import ElasticsearchStore
 
-from embedder import embed
+from embedder import MODEL_NAME, get_embeddings
 from es_client import DATA_DIR, es
 
 INDEX = "payer-policies"
@@ -78,11 +79,12 @@ def split_into_chunks(raw: bytes):
             yield byte_start, byte_start + len(stripped), stripped.decode("utf-8")
 
 
-def build_docs(policy_file) -> list[dict]:
+def build_chunks(policy_file) -> list[dict]:
+    """One dict per section: the raw English text + its metadata."""
     raw = policy_file.read_bytes()
     policy = policy_metadata(raw.decode("utf-8"))
 
-    docs = []
+    chunks = []
     section_title = "HEADER"
     for i, (byte_start, byte_end, text) in enumerate(split_into_chunks(raw)):
         first_line = text.split("\n", 1)[0]
@@ -97,37 +99,52 @@ def build_docs(policy_file) -> list[dict]:
         else:
             section_no, chunk_type = "0", "header"
 
-        docs.append({
-            "chunk_id": f"{policy['policy_id']}::{i:02d}",
-            **policy,
-            "section_no": section_no,
-            "section_title": section_title,
-            "chunk_type": chunk_type,
-            **chunk_metadata(text),
-            "chunk_text": text,
-            "source_file": policy_file.name,
-            "byte_start": byte_start,
-            "byte_end": byte_end,
+        chunks.append({
+            "text": text,
+            "metadata": {
+                "chunk_id": f"{policy['policy_id']}::{i:02d}",
+                **policy,
+                "section_no": section_no,
+                "section_title": section_title,
+                "chunk_type": chunk_type,
+                **chunk_metadata(text),
+                "source_file": policy_file.name,
+                "byte_start": byte_start,
+                "byte_end": byte_end,
+            },
         })
-
-    # Embed title + section + text: "less than 40.0 kg/m2" alone means little.
-    vectors = embed([f"{d['title']}. Section {d['section_no']} {d['section_title']}. {d['chunk_text']}" for d in docs])
-    for doc, vector in zip(docs, vectors):
-        doc["chunk_vector"] = vector
-    return docs
+    return chunks
 
 
 if __name__ == "__main__":
-    for policy_file in sorted(POLICY_DIR.glob("*.txt")):
-        docs = build_docs(policy_file)
-        actions = [{"_index": INDEX, "_id": d["chunk_id"], "_source": d} for d in docs]
-        ok, errors = helpers.bulk(es, actions, raise_on_error=False)
-        es.indices.refresh(index=INDEX)
+    saved_model = es.indices.get_mapping(index=INDEX)[INDEX]["mappings"].get("_meta", {}).get("embedding_model")
+    if saved_model != MODEL_NAME:
+        raise SystemExit(f"Index was created for {saved_model!r} but .env selects {MODEL_NAME!r}. "
+                         f"Run create_indices.py first.")
 
-        print(f"\n{policy_file.name}: indexed {ok} chunks, errors: {len(errors)}")
-        for err in errors[:3]:
-            print("   error:", err)
-        for d in docs:
-            extras = {k: d[k] for k in ("cpt_codes_mentioned", "icd_codes_mentioned", "duration_months",
-                                        "duration_days", "threshold_value") if d[k]}
-            print(f"  {d['chunk_id']}  §{d['section_no']:<4} {d['chunk_type']:<15} {extras}")
+    embeddings = get_embeddings()
+    store = ElasticsearchStore(index_name=INDEX, client=es, embedding=embeddings,
+                               query_field="chunk_text", vector_query_field="chunk_vector")
+
+    for policy_file in sorted(POLICY_DIR.glob("*.txt")):
+        chunks = build_chunks(policy_file)
+        meta = [c["metadata"] for c in chunks]
+
+        # Store the raw English, but embed title + section + text:
+        # "less than 40.0 kg/m2" alone means little to the model.
+        texts_to_embed = [f"{m['title']}. Section {m['section_no']} {m['section_title']}. {c['text']}"
+                          for c, m in zip(chunks, meta)]
+        vectors = embeddings.embed_documents(texts_to_embed)
+
+        store.add_embeddings(
+            text_embeddings=list(zip([c["text"] for c in chunks], vectors)),
+            metadatas=meta,
+            ids=[m["chunk_id"] for m in meta],
+            create_index_if_not_exists=False,  # create_indices.py owns the mapping
+        )
+
+        print(f"\n{policy_file.name}: indexed {len(chunks)} chunks with {MODEL_NAME}")
+        for m in meta:
+            extras = {k: m[k] for k in ("cpt_codes_mentioned", "icd_codes_mentioned", "duration_months",
+                                        "duration_days", "threshold_value") if m[k]}
+            print(f"  {m['chunk_id']}  §{m['section_no']:<4} {m['chunk_type']:<15} {extras}")

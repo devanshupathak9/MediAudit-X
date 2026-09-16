@@ -1,2 +1,8 @@
-elasticsearch>=9,<10
+# langchain-elasticsearch pins the Elasticsearch client to 8.x;
+# the 8.x client works with the Elasticsearch 9.2 server.
+elasticsearch>=8.19,<9
+langchain-core>=1.0
+langchain-elasticsearch>=1.0
+langchain-openai>=1.0
 fastembed>=0.7
+python-dotenv>=1.0
