@@ -1,0 +1,56 @@
+# MediAudit-X local Elasticsearch
+#
+#   docker compose up -d           # Elasticsearch only  (~1.5 GB RAM)
+#   docker compose --profile ui up -d   # + Kibana        (~2.5 GB RAM)
+#   docker compose down            # stop, keep data
+#   docker compose down -v         # stop, WIPE data
+#
+# There is no Dockerfile here on purpose: Elastic ships an official image and we
+# add nothing to it. Configuration goes in `environment:` below, not in a build.
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    container_name: mediaudit-es
+    environment:
+      - node.name=mediaudit-es
+      - cluster.name=${CLUSTER_NAME}
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms${ES_JAVA_HEAP} -Xmx${ES_JAVA_HEAP}
+      - bootstrap.memory_lock=true
+      # --- dev only: no TLS, no auth, so curl "just works" ---
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - xpack.license.self_generated.type=trial
+      # ES|QL needs no flag in 9.x, it is GA. Left here as documentation.
+    ulimits:
+      memlock: { soft: -1, hard: -1 }
+      nofile:  { soft: 65536, hard: 65536 }
+    ports:
+      - "${ES_PORT}:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      # yellow is success for a single node: replicas can never be allocated.
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 40s
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+    container_name: mediaudit-kibana
+    profiles: ["ui"]          # only starts with --profile ui
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_NAME=mediaudit-kibana
+    ports:
+      - "${KIBANA_PORT}:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+volumes:
+  esdata:
+    driver: local

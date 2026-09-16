@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- MediAudit-X ---
+# elasticsearch/.env is pure local config (version, ports, heap) with no secrets.
+# It must be committed or `docker compose up` fails for anyone cloning the repo.
+!elasticsearch/.env
